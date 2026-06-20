@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>❤️ Dhruv & Disha Love Diary ❤️</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #ffe6f2, #fff4e6);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            text-align: center;
+            color: #ff4081;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        .input-box {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        textarea {
+            width: 100%;
+            border: none;
+            outline: none;
+            resize: none;
+            padding: 15px;
+            border-radius: 15px;
+            background: #fff5fa;
+            font-size: 16px;
+        }
+
+        #message {
+            height: 150px;
+        }
+
+        .publish-btn {
+            margin-top: 15px;
+            background: #ff4081;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+            position: relative;
+            animation: fadeIn .5s ease;
+        }
+
+        .card::before {
+            content: "❤️";
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 22px;
+        }
+
+        .card p {
+            line-height: 1.8;
+            white-space: pre-wrap;
+        }
+
+        .time {
+            font-size: 12px;
+            color: #888;
+            margin-top: 10px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            color: white;
+        }
+
+        .reply-btn {
+            background: #ff80ab;
+        }
+
+        .like-btn {
+            background: #ff4081;
+        }
+
+        .delete-btn {
+            background: #e53935;
+        }
+
+        .reply-input {
+            width: 100%;
+            height: 80px;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+        }
+
+        .reply-send {
+            margin-top: 8px;
+            background: #ff4081;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        .reply-card {
+            margin-top: 10px;
+            background: #fff0f5;
+            padding: 10px;
+            border-left: 4px solid #ff4081;
+            border-radius: 10px;
+        }
+
+        .music-btn {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            background: #ff4081;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 25px;
+            cursor: pointer;
+            z-index: 100;
+        }
+
+        .heart {
+            position: fixed;
+            bottom: -20px;
+            font-size: 20px;
+            animation: float 8s linear infinite;
+            opacity: .7;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0);
+                opacity: 0;
+            }
+
+            20% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-120vh);
+                opacity: 0;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <button class="music-btn" onclick="toggleMusic()" id="musicBtn">
+        🎵 Music
+    </button>
+
+    <div class="container">
+
+        <h1>❤️ Dhruv's Poetry Corner ❤️</h1>
+
+        <p class="subtitle">
+            A special place for Dhruv's thoughts, poems and Disha's replies 💕
+        </p>
+
+        <div class="input-box">
+
+            <textarea id="message" placeholder="Write your poem, thought or feeling here..."></textarea>
+
+            <button class="publish-btn" onclick="addThought()">
+                ✨ Publish
+            </button>
+
+        </div>
+
+        <div id="cards" class="cards"></div>
+
+    </div>
+
+    <audio id="bgMusic" loop>
+        <source src="leberch-wedding-romantic-262606.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+
+        const music = document.getElementById("bgMusic");
+
+        window.addEventListener("load", () => {
+            music.play().catch(() => {
+                document.body.addEventListener("click", () => {
+                    music.play();
+                }, { once: true });
+            });
+        });
+
+        function toggleMusic() {
+
+            if (music.paused) {
+                music.play();
+                document.getElementById("musicBtn").innerHTML = "🎵 Music On";
+            }
+            else {
+                music.pause();
+                document.getElementById("musicBtn").innerHTML = "🔇 Music Off";
+            }
+        }
+
+        function addThought() {
+
+            let text = document.getElementById("message").value.trim();
+
+            if (text === "") {
+                alert("Please write something ❤️");
+                return;
+            }
+
+            let poems = JSON.parse(localStorage.getItem("poems")) || [];
+
+            poems.unshift({
+                text: text,
+                time: new Date().toLocaleString(),
+                likes: 0,
+                replies: []
+            });
+
+            localStorage.setItem("poems", JSON.stringify(poems));
+
+            document.getElementById("message").value = "";
+
+            displayPoems();
+        }
+
+        function displayPoems() {
+
+            let poems = JSON.parse(localStorage.getItem("poems")) || [];
+
+            let cards = document.getElementById("cards");
+
+            cards.innerHTML = "";
+
+            poems.forEach((poem, index) => {
+
+                let repliesHTML = "";
+
+                poem.replies.forEach(reply => {
+                    repliesHTML += `
+<div class="reply-card">
+<strong>Disha 💕</strong><br><br>
+${reply}
+</div>
+`;
+                });
+
+                cards.innerHTML += `
+<div class="card">
+
+<p>${poem.text}</p>
+
+<div class="actions">
+
+<button class="btn reply-btn"
+onclick="showReplyBox(${index})">
+💌 Reply
+</button>
+
+<button class="btn like-btn"
+onclick="likePoem(${index})">
+❤️ ${poem.likes}
+</button>
+
+<button class="btn delete-btn"
+onclick="deletePoem(${index})">
+🗑 Delete
+</button>
+
+</div>
+
+<div id="replyBox${index}"></div>
+
+${repliesHTML}
+
+<div class="time">
+📅 ${poem.time}
+</div>
+
+</div>
+`;
+            });
+        }
+
+        function showReplyBox(index) {
+
+            let box = document.getElementById("replyBox" + index);
+
+            if (box.innerHTML !== "") return;
+
+            box.innerHTML = `
+<textarea class="reply-input"
+id="replyInput${index}"
+placeholder="Write your reply ❤️"></textarea>
+
+<button class="reply-send"
+onclick="saveReply(${index})">
+Send Reply 💕
+</button>
+`;
+        }
+
+        function saveReply(index) {
+
+            let text = document
+                .getElementById("replyInput" + index)
+                .value.trim();
+
+            if (text === "") {
+                alert("Write a reply first ❤️");
+                return;
+            }
+
+            let poems = JSON.parse(localStorage.getItem("poems")) || [];
+
+            poems[index].replies.push(text);
+
+            localStorage.setItem("poems", JSON.stringify(poems));
+
+            displayPoems();
+        }
+
+        function likePoem(index) {
+
+            let poems = JSON.parse(localStorage.getItem("poems")) || [];
+
+            poems[index].likes++;
+
+            localStorage.setItem("poems", JSON.stringify(poems));
+
+            displayPoems();
+        }
+
+        function deletePoem(index) {
+
+            if (!confirm("Delete this poem?")) return;
+
+            let poems = JSON.parse(localStorage.getItem("poems")) || [];
+
+            poems.splice(index, 1);
+
+            localStorage.setItem("poems", JSON.stringify(poems));
+
+            displayPoems();
+        }
+
+        setInterval(() => {
+
+            let heart = document.createElement("div");
+
+            heart.className = "heart";
+            heart.innerHTML = "❤️";
+
+            heart.style.left = Math.random() * 100 + "vw";
+
+            heart.style.fontSize = (15 + Math.random() * 20) + "px";
+
+            document.body.appendChild(heart);
+
+            setTimeout(() => {
+                heart.remove();
+            }, 8000);
+
+        }, 500);
+
+        window.onload = displayPoems;
+
+    </script>
+
+</body>
+
+</html>
